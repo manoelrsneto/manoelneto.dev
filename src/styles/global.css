@@ -1,0 +1,420 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://www.nerdfonts.com/assets/css/webfont.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  @font-face {
+    font-family: "NerdFontsSymbols";
+    src: url("https://www.nerdfonts.com/assets/fonts/Symbols-2048-em%20Nerd%20Font%20Complete.woff2")
+      format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .status-group {
+    @apply inline-flex items-stretch overflow-hidden rounded-full border font-mono text-[12px] font-bold leading-none select-none;
+    background-color: var(--color-status-bg);
+    border-color: var(--color-status-border);
+  }
+
+  .status-segment {
+    @apply inline-flex items-center gap-1 px-2.5 py-[4px] whitespace-nowrap;
+    appearance: none;
+    background-color: transparent;
+    border-left: 1px solid var(--color-status-border);
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+    color: var(--color-text);
+    font: inherit;
+  }
+
+  .status-segment:first-child {
+    border-left: 0;
+  }
+
+  .status-mode {
+    background-color: var(--color-blue);
+    color: var(--color-status-mode-fg);
+    letter-spacing: 0.06em;
+  }
+
+  .status-mode-command {
+    background-color: var(--color-peach);
+    color: var(--color-status-mode-fg);
+  }
+
+  .status-muted {
+    color: var(--color-overlay);
+  }
+
+  .status-buffer {
+    background-color: var(--color-status-buffer-bg);
+    color: var(--color-text);
+  }
+
+  .status-branch {
+    color: var(--color-blue);
+  }
+
+  .status-filetype {
+    color: var(--color-red);
+  }
+
+  .status-progress {
+    color: var(--color-blue);
+  }
+
+  .status-encoding,
+  .status-year {
+    background-color: var(--color-blue);
+    color: var(--color-status-mode-fg);
+  }
+
+  .status-icon {
+    font-family:
+      "NerdFontsSymbols", "NerdFontsSymbols Nerd Font", "Symbols Nerd Font", "JetBrains Mono",
+      ui-monospace, monospace;
+    font-size: 1.08em;
+    line-height: 1;
+  }
+
+  .editor-ruler {
+    @apply flex items-center gap-3 font-mono text-xs font-bold;
+    color: var(--color-overlay);
+  }
+
+  .editor-ruler span {
+    @apply h-px flex-1;
+    background-color: var(--color-border);
+  }
+
+  .editor-ruler strong {
+    @apply font-bold uppercase tracking-[0.12em];
+    color: var(--color-blue);
+  }
+
+  .editor-ruler em {
+    @apply hidden not-italic sm:inline;
+    color: var(--color-overlay);
+  }
+
+  .editor-buffer {
+    @apply relative;
+  }
+
+  .editor-line-nums {
+    @apply pointer-events-none absolute -left-9 top-1 hidden select-none flex-col gap-16 font-mono text-xs font-bold lg:flex;
+    color: color-mix(in oklab, var(--color-overlay) 62%, transparent);
+  }
+
+  .diagram-link {
+    @apply block overflow-hidden rounded-xl transition-colors;
+  }
+
+  .diagram-link img {
+    @apply cursor-zoom-in transition-transform;
+  }
+
+  .diagram-link:hover img {
+    transform: scale(1.01);
+  }
+
+  .diagram-lightbox {
+    @apply fixed inset-0 z-[70] items-center justify-center p-4 sm:p-8;
+  }
+
+  .diagram-lightbox[aria-hidden="false"] {
+    @apply flex;
+  }
+
+  .diagram-lightbox__backdrop {
+    @apply absolute inset-0 border-0 p-0;
+    background: color-mix(in oklab, var(--color-crust) 78%, transparent);
+    backdrop-filter: blur(3px);
+  }
+
+  .diagram-lightbox__panel {
+    @apply relative z-10 max-h-[90vh] max-w-[90vw] overflow-hidden rounded-xl border p-3;
+    background-color: color-mix(in oklab, var(--color-mantle) 96%, transparent);
+    border-color: var(--color-border);
+    box-shadow: 0 24px 80px color-mix(in oklab, var(--color-crust) 48%, transparent);
+  }
+
+  .diagram-lightbox__image {
+    @apply block h-full w-full rounded-lg object-contain;
+  }
+
+  .search-palette {
+    @apply fixed inset-0 z-[60] flex items-start justify-center px-4 pt-[10vh];
+  }
+
+  .search-palette__backdrop {
+    @apply absolute inset-0;
+    background: color-mix(in oklab, var(--color-crust) 55%, transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .search-palette__panel {
+    @apply relative z-10 w-full max-w-2xl overflow-hidden rounded-2xl border;
+    background: color-mix(in oklab, var(--color-mantle) 96%, transparent);
+    border-color: var(--color-border);
+    box-shadow: 0 24px 80px color-mix(in oklab, var(--color-crust) 48%, transparent);
+  }
+
+  .search-palette__header {
+    @apply flex items-center justify-between border-b px-4 py-3 font-mono text-xs font-bold;
+    border-color: var(--color-border);
+    color: var(--color-overlay);
+  }
+
+  .search-palette__prompt {
+    @apply flex items-center gap-2;
+  }
+
+  .search-palette__close {
+    @apply inline-flex cursor-pointer items-center font-mono text-[11px] font-bold;
+    color: var(--color-overlay);
+  }
+
+  .search-palette__input-wrap {
+    @apply block border-b px-4 py-3;
+    border-color: var(--color-border);
+  }
+
+  .search-palette__input {
+    @apply w-full bg-transparent font-mono text-base font-bold outline-none;
+    color: var(--color-text);
+  }
+
+  .search-palette__input::placeholder {
+    color: var(--color-overlay);
+  }
+
+  .search-palette__state {
+    @apply px-4 py-3 font-mono text-xs font-bold;
+    color: var(--color-overlay);
+  }
+
+  .search-palette__results {
+    @apply max-h-[55vh] overflow-y-auto px-2 pb-2;
+  }
+
+  .search-result {
+    @apply block rounded-xl border border-transparent px-3 py-3 transition-colors;
+  }
+
+  .search-result:hover,
+  .search-result--active {
+    background-color: var(--color-status-bg);
+    border-color: var(--color-status-border);
+  }
+
+  .search-result__top {
+    @apply grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-3 font-mono text-xs font-bold;
+  }
+
+  .search-result__index,
+  .search-result__url {
+    color: var(--color-overlay);
+  }
+
+  .search-result__title {
+    @apply truncate;
+    color: var(--color-text);
+  }
+
+  .search-result__excerpt {
+    @apply mt-2 pl-10 text-sm leading-relaxed;
+    color: var(--color-subtext);
+  }
+}
+:root {
+  --color-base: #eff1f5;
+  --color-mantle: #e6e9ef;
+  --color-crust: #dce0e8;
+  --color-surface: #ccd0da;
+  --color-surface0: #ccd0da;
+  --color-surface1: #bcc0cc;
+  --color-surface2: #acb0be;
+  --color-border: #bcc0cc;
+  --color-overlay: #8c8fa1;
+  --color-overlay0: #8c8fa1;
+  --color-overlay1: #7c7f93;
+  --color-overlay2: #6c6f85;
+  --color-text: #4c4f69;
+  --color-subtext: #5c5f77;
+  --color-subtext0: #5c5f77;
+  --color-subtext1: #4c4f69;
+  --color-accent: #8839ef; /* mauve */
+  --color-accent2: #1e66f5; /* blue */
+  --color-mauve: #8839ef;
+  --color-blue: #1e66f5;
+  --color-green: #40a02b;
+  --color-red: #d20f39;
+  --color-yellow: #df8e1d;
+  --color-peach: #fe640b;
+  --color-teal: #179299;
+  --color-status-mode-fg: #eff1f5;
+  --color-status-bg: #ccd0da;
+  --color-status-border: #bcc0cc;
+  --color-status-buffer-bg: #bcc0cc;
+
+  color-scheme: light;
+}
+.dark {
+  --color-base: #1e1e2e;
+  --color-mantle: #181825;
+  --color-crust: #11111b;
+  --color-surface: #313244;
+  --color-surface0: #313244;
+  --color-surface1: #45475a;
+  --color-surface2: #585b70;
+  --color-border: #45475a;
+  --color-overlay: #6c7086;
+  --color-overlay0: #6c7086;
+  --color-overlay1: #7f849c;
+  --color-overlay2: #9399b2;
+  --color-text: #cdd6f4;
+  --color-subtext: #a6adc8;
+  --color-subtext0: #a6adc8;
+  --color-subtext1: #bac2de;
+  --color-accent: #cba6f7; /* mauve */
+  --color-accent2: #89b4fa; /* blue */
+  --color-mauve: #cba6f7;
+  --color-blue: #89b4fa;
+  --color-green: #a6e3a1;
+  --color-red: #f38ba8;
+  --color-yellow: #f9e2af;
+  --color-peach: #fab387;
+  --color-teal: #94e2d5;
+  --color-status-mode-fg: #11111b;
+  --color-status-bg: #313244;
+  --color-status-border: #45475a;
+  --color-status-buffer-bg: #45475a;
+
+  color-scheme: dark;
+}
+html {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--color-base);
+  color: var(--color-text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body.search-open {
+  overflow: hidden;
+}
+
+body.command-open {
+  overflow: hidden;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 140ms;
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0ms;
+  }
+}
+
+.command-palette {
+  @apply fixed inset-0 z-[70] px-4 pt-[12vh];
+}
+
+.command-palette[aria-hidden="false"] {
+  @apply flex items-start justify-center;
+}
+
+.command-palette__backdrop {
+  @apply absolute inset-0;
+  background: color-mix(in oklab, var(--color-crust) 30%, transparent);
+}
+
+.command-palette__panel {
+  @apply relative z-10 w-full max-w-xl rounded-2xl border px-4 py-3;
+  background: color-mix(in oklab, var(--color-mantle) 98%, transparent);
+  border-color: var(--color-border);
+  box-shadow: 0 18px 56px color-mix(in oklab, var(--color-crust) 36%, transparent);
+}
+
+.command-palette__prompt {
+  @apply flex items-center gap-2;
+}
+
+.command-palette__input {
+  @apply w-full bg-transparent font-mono text-sm font-bold outline-none;
+  color: var(--color-text);
+}
+
+.command-palette__input::placeholder {
+  color: var(--color-overlay);
+}
+
+.command-palette__state {
+  @apply mt-2 font-mono text-[11px] font-bold;
+  color: var(--color-overlay);
+}
+
+.post-list > * + * {
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 55%, transparent);
+}
+
+.dark .astro-code {
+  background-color: var(--shiki-dark-bg) !important;
+}
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+.astro-code {
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+:not(pre) > code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.875em;
+  color: var(--color-mauve);
+  background-color: var(--color-surface);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-border);
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-overlay);
+}
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-base);
+}

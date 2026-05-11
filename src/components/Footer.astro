@@ -1,0 +1,185 @@
+---
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    translationSlug?: string;
+    pageLang?: "en" | "pt";
+}
+const { translationSlug, pageLang = "en" } = Astro.props as Props;
+
+const year = new Date().getFullYear();
+const { pathname } = Astro.url;
+
+const isPost =
+    pathname.startsWith("/blog/") && pathname.length > "/blog/".length;
+const bufferName = isPost
+    ? pathname.replace(/^\/blog\//, "").replace(/\/$/, "")
+    : "index";
+const typeLabel = isPost ? "mdx" : "home";
+const siteSha = import.meta.env.PUBLIC_SITE_SHA as string | undefined;
+const siteBranch = import.meta.env.PUBLIC_SITE_BRANCH as string | undefined;
+const rssHref = pageLang === "pt" ? "/pt/rss.xml" : "/rss.xml";
+const uiText = ui[pageLang];
+---
+
+<footer
+    class="fixed bottom-0 left-0 right-0 z-50 w-full select-none"
+    data-footer
+>
+    <div
+        class="bg-[var(--color-mantle)]/96 backdrop-blur supports-[backdrop-filter]:backdrop-blur border-t border-[var(--color-border)] w-full px-3 py-1.5 font-mono flex items-center gap-2"
+    >
+        <span class="status-group">
+            <span class="status-segment status-mode">
+                <span class="status-icon"></span>
+                <span id="mode-pill">NORMAL</span>
+            </span>
+            {
+                translationSlug ? (
+                    <a
+                        class="status-segment status-muted hidden sm:inline-flex hover:text-[var(--color-text)] transition-colors"
+                        id="lang-pill-link"
+                        href={`/blog/${translationSlug}`}
+                        title={uiText.switchLanguage}
+                    >
+                        <span id="lang-pill">EN</span>
+                    </a>
+                ) : (
+                    <span
+                        class="status-segment status-muted hidden sm:inline-flex"
+                        title={uiText.pageLanguage}
+                    >
+                        <span id="lang-pill">EN</span>
+                    </span>
+                )
+            }
+            <button
+                type="button"
+                class="status-segment status-buffer max-w-[38vw] sm:max-w-[44vw] truncate cursor-pointer hover:text-[var(--color-accent)] transition-colors"
+                title={uiText.copyPageUrl}
+                id="buffer-pill"
+                data-label={bufferName}
+            >
+                {bufferName}
+            </button>
+            {
+                siteBranch && (
+                    <span class="status-segment status-branch hidden sm:inline-flex">
+                        <span class="status-icon"></span>
+                        <span>{siteBranch}</span>
+                    </span>
+                )
+            }
+        </span>
+        <span class="flex-1"></span>
+        <span class="status-group">
+            <span class="status-segment status-filetype">
+                <span class="status-icon"></span>
+                <span>{typeLabel}</span>
+            </span>
+            <span
+                class="status-segment status-progress"
+                id="progress-pill"
+                title={uiText.readingProgress}>0%</span
+            >
+            <a
+                href={rssHref}
+                class="status-segment status-muted hover:text-[var(--color-text)] transition-colors hidden sm:inline-flex"
+                title="RSS feed"
+            >
+                rss
+            </a>
+            <span class="status-segment status-encoding hidden sm:inline-flex"
+                >utf-8</span
+            >
+            <span class="status-segment status-year">{year}</span>
+            {
+                siteSha && (
+                    <span class="status-segment status-muted hidden md:inline-flex">
+                        {siteSha.slice(0, 7)}
+                    </span>
+                )
+            }
+        </span>
+    </div>
+
+    <script is:inline>
+        (function () {
+            const modeSegment = document.querySelector(".status-mode");
+            const mode = document.getElementById("mode-pill");
+            if (!mode || !modeSegment) return;
+
+            function update() {
+                const isCommand =
+                    document.body.classList.contains("command-open");
+                mode.textContent = isCommand ? "COMMAND" : "NORMAL";
+                modeSegment.classList.toggle("status-mode-command", isCommand);
+            }
+
+            window.addEventListener("open-command", update);
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    requestAnimationFrame(update);
+                }
+            });
+
+            const observer = new MutationObserver(update);
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ["class"],
+            });
+
+            update();
+        })();
+        (function () {
+            const el = document.getElementById("lang-pill");
+            if (!el) return;
+            const lang = document.documentElement.getAttribute("lang") || "en";
+            el.textContent = lang.toUpperCase();
+        })();
+        (function () {
+            const el = document.getElementById("buffer-pill");
+            if (!el) return;
+            el.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    const prev = el.dataset.label || el.textContent || "";
+                    el.textContent = "yanked";
+                    setTimeout(() => (el.textContent = prev), 900);
+                } catch {}
+            });
+        })();
+        (function () {
+            const pill = document.getElementById("progress-pill");
+            const target =
+                document.querySelector("#post-root") ||
+                document.querySelector("main") ||
+                document.body;
+            if (!pill) return;
+
+            let rafPending = false;
+
+            function update() {
+                rafPending = false;
+                const total = Math.max(
+                    1,
+                    target.scrollHeight - window.innerHeight,
+                );
+                const scrolled = Math.max(0, Math.min(total, window.scrollY));
+                const pct = Math.max(
+                    0,
+                    Math.min(100, (scrolled / total) * 100),
+                );
+                pill.textContent = Math.round(pct) + "%";
+            }
+            function onScroll() {
+                if (rafPending) return;
+                rafPending = true;
+                requestAnimationFrame(update);
+            }
+            window.addEventListener("scroll", onScroll, { passive: true });
+            window.addEventListener("resize", onScroll);
+            update();
+        })();
+    </script>
+</footer>

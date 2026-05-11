@@ -1,0 +1,32 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .base { fill: #eff1f5; }
+    .mantle { fill: #e6e9ef; }
+    .surface { fill: #ccd0da; }
+    .border { stroke: #bcc0cc; }
+    .text { fill: #4c4f69; }
+    .subtext { fill: #6c6f85; }
+    .accent { fill: #8839ef; }
+    .blue { fill: #1e66f5; }
+    @media (prefers-color-scheme: dark) {
+      .base { fill: #1e1e2e; }
+      .mantle { fill: #181825; }
+      .surface { fill: #313244; }
+      .border { stroke: #45475a; }
+      .text { fill: #cdd6f4; }
+      .subtext { fill: #a6adc8; }
+      .accent { fill: #cba6f7; }
+      .blue { fill: #89b4fa; }
+    }
+  </style>
+  <rect class="base" width="1200" height="630"/>
+  <rect class="mantle" x="40" y="40" width="1120" height="550" rx="24"/>
+  <rect class="surface border" x="92" y="92" width="260" height="44" rx="22" stroke-width="2"/>
+  <text x="124" y="120" class="text" font-family="JetBrains Mono, monospace" font-size="24" font-weight="700">manoelneto<tspan class="accent">.dev</tspan></text>
+  <text x="92" y="228" class="blue" font-family="JetBrains Mono, monospace" font-size="28" font-weight="700">&gt; cat hello-world.mdx</text>
+  <text x="92" y="322" class="text" font-family="JetBrains Mono, monospace" font-size="72" font-weight="700">quality engineering</text>
+  <text x="92" y="392" class="subtext" font-family="JetBrains Mono, monospace" font-size="34" font-weight="600">technical management • tooling • writing</text>
+  <rect class="surface border" x="92" y="464" width="404" height="48" rx="24" stroke-width="2"/>
+  <text x="122" y="495" class="blue" font-family="JetBrains Mono, monospace" font-size="24" font-weight="700">/rss.xml</text>
+  <rect x="40" y="554" width="1120" height="2" class="border"/>
+</svg>

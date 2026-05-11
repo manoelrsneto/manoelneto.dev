@@ -1,0 +1,51 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+import LangToggle from "./LangToggle.astro";
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    pageLang?: "en" | "pt";
+    localeSwitchHref?: string;
+}
+
+const { pageLang = "en", localeSwitchHref } = Astro.props;
+const homeHref = pageLang === "pt" ? "/pt" : "/";
+const uiText = ui[pageLang];
+---
+
+<header class="border-b border-[var(--color-border)]">
+    <div class="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a
+            href={homeHref}
+            class="status-group hover:border-[var(--color-accent)] transition-colors"
+        >
+            <span class="status-segment status-buffer">
+                <span
+                    >manoelneto<span class="text-[var(--color-accent)]"
+                        >.dev</span
+                    ></span
+                >
+            </span>
+        </a>
+        <div class="flex items-center gap-4">
+            <button
+                type="button"
+                class="inline-flex cursor-pointer items-center font-mono text-[11px] font-bold text-[var(--color-overlay)] transition-colors hover:text-[var(--color-subtext)]"
+                data-search-trigger
+                aria-label={uiText.openSearch}
+                title={uiText.searchShortcut}
+            >
+                search
+            </button>
+            {
+                localeSwitchHref && (
+                    <LangToggle
+                        currentLang={pageLang}
+                        href={localeSwitchHref}
+                    />
+                )
+            }
+            <ThemeToggle pageLang={pageLang} />
+        </div>
+    </div>
+</header>

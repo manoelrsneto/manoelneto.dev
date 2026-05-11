@@ -1,0 +1,55 @@
+---
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    pageLang?: "en" | "pt";
+}
+
+const { pageLang = "en" } = Astro.props;
+const uiText = ui[pageLang];
+---
+
+<button
+    id="theme-toggle"
+    aria-label={uiText.toggleTheme}
+    class="inline-flex cursor-pointer items-center font-mono text-[11px] font-bold text-[var(--color-overlay)] transition-colors hover:text-[var(--color-subtext)]"
+    title={uiText.toggleThemeTitle}
+>
+    <span id="theme-label">set bg=dark</span>
+</button>
+
+<script is:inline>
+    (function () {
+        const toggle = document.getElementById("theme-toggle");
+        const label = document.getElementById("theme-label");
+
+        function getTheme() {
+            const stored = localStorage.getItem("theme");
+            if (stored) return stored;
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+        }
+
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.documentElement.classList.add("dark");
+                label.textContent = "set bg=light";
+            } else {
+                document.documentElement.classList.remove("dark");
+                label.textContent = "set bg=dark";
+            }
+        }
+
+        applyTheme(getTheme());
+
+        toggle.addEventListener("click", () => {
+            const current = document.documentElement.classList.contains("dark")
+                ? "dark"
+                : "light";
+            const next = current === "dark" ? "light" : "dark";
+            localStorage.setItem("theme", next);
+            applyTheme(next);
+        });
+    })();
+</script>

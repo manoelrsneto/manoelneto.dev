@@ -1,0 +1,331 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    tags?: string[];
+    lang?: "en" | "pt";
+    translationSlug?: string;
+    slug: string;
+    readingMinutes: number;
+    series?: {
+        title: string;
+        position: number;
+        total: number;
+        items: Array<{
+            title: string;
+            slug: string;
+            index: number;
+            current: boolean;
+        }>;
+    };
+}
+
+const {
+    title,
+    description,
+    pubDate,
+    updatedDate,
+    tags,
+    lang = "en",
+    translationSlug,
+    slug,
+    readingMinutes,
+    series,
+} = Astro.props;
+
+const pubDateStr = pubDate.toISOString().split("T")[0];
+const updatedDateStr = updatedDate?.toISOString().split("T")[0];
+const fileName = `${slug.split("/").at(-1) ?? slug}.mdx`;
+const bufferPath = `~/blog/${slug}.mdx`;
+const command = `cat ${fileName}`;
+const uiText = ui[lang];
+const readTimeLabel = `${readingMinutes} ${uiText.minRead}`;
+const homeHref = lang === "pt" ? "/pt" : "/";
+const localeSwitchHref = translationSlug
+    ? `/blog/${translationSlug}`
+    : undefined;
+---
+
+<BaseLayout
+    title={`${title} — manoelneto.dev`}
+    description={description}
+    pageLang={lang}
+    translationSlug={translationSlug}
+    localeSwitchHref={localeSwitchHref}
+>
+    <article id="post-root">
+        <header class="mb-9 font-mono">
+            <div class="mb-5">
+                <div class="status-group min-w-0 max-w-full">
+                    <span class="status-segment status-filetype">
+                        <span class="status-icon">󰈙</span>
+                        <span class="truncate max-w-[52vw] sm:max-w-none"
+                            >{bufferPath}</span
+                        >
+                    </span>
+                </div>
+            </div>
+
+            <div
+                class="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-overlay)]"
+            >
+                <span class="text-[var(--color-blue)]">❯</span>
+                <span>{command}</span>
+            </div>
+
+            <h1
+                class="mb-5 font-mono text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl"
+            >
+                {title}
+            </h1>
+
+            <div
+                class="flex flex-wrap items-center gap-3 text-sm font-bold text-[var(--color-overlay)]"
+            >
+                <time
+                    class="text-[var(--color-blue)]"
+                    datetime={pubDate.toISOString()}>{pubDateStr}</time
+                >
+                {
+                    updatedDateStr && (
+                        <>
+                            <span>·</span>
+                            <span>
+                                {uiText.updated} {updatedDateStr}
+                            </span>
+                        </>
+                    )
+                }
+                {
+                    tags && tags.length > 0 && (
+                        <>
+                            <span>·</span>
+                            <div class="flex flex-wrap gap-2">
+                                {tags.map((tag) => (
+                                    <span class="status-group">
+                                        <span class="status-segment status-muted">
+                                            #{tag}
+                                        </span>
+                                    </span>
+                                ))}
+                            </div>
+                        </>
+                    )
+                }
+            </div>
+
+            <div class="editor-ruler mt-7" aria-hidden="true">
+                <span></span>
+                <strong>post</strong>
+                <em>{readTimeLabel}</em>
+                <span></span>
+            </div>
+        </header>
+
+        <div class="editor-buffer">
+            <div class="editor-line-nums" aria-hidden="true">
+                <span>1</span>
+                <span>8</span>
+                <span>16</span>
+                <span>24</span>
+                <span>32</span>
+            </div>
+            <div
+                class="prose prose-catppuccin max-w-none
+        prose-headings:font-mono prose-headings:text-[var(--color-text)] prose-headings:font-semibold
+        prose-p:text-[var(--color-text)] prose-p:leading-relaxed
+        prose-a:text-[var(--color-accent)] prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-[var(--color-text)]
+        prose-blockquote:border-l-[var(--color-accent)] prose-blockquote:text-[var(--color-subtext)] prose-blockquote:not-italic
+        prose-hr:border-[var(--color-border)]
+        prose-li:text-[var(--color-text)]
+        prose-th:text-[var(--color-text)] prose-td:text-[var(--color-text)]"
+            >
+                <slot />
+            </div>
+        </div>
+
+        {
+            series && (
+                <div class="mt-10 pt-6 border-t border-[var(--color-border)] font-mono">
+                    <div class="editor-ruler mb-4" aria-hidden="true">
+                        <span />
+                        <strong>{uiText.series}</strong>
+                        <em>
+                            {series.position}/{series.total}
+                        </em>
+                        <span />
+                    </div>
+
+                    <p class="mb-4 text-sm font-bold text-[var(--color-subtext)]">
+                        <span class="text-[var(--color-text)]">
+                            {series.title}
+                        </span>
+                        <span class="text-[var(--color-overlay)]">
+                            {" "}
+                            · {series.position}/{series.total}
+                        </span>
+                    </p>
+
+                    <div class="space-y-2 text-sm font-bold">
+                        {series.items.map((item) =>
+                            item.current ? (
+                                <div class="flex items-center gap-3 text-[var(--color-subtext)]">
+                                    <span class="w-6 text-[var(--color-overlay)]">
+                                        {String(item.index).padStart(2, "0")}
+                                    </span>
+                                    <span class="text-[var(--color-accent)]">
+                                        {item.title}
+                                    </span>
+                                    <span class="text-[var(--color-overlay)]">
+                                        ←
+                                    </span>
+                                </div>
+                            ) : (
+                                <a
+                                    href={`/blog/${item.slug}`}
+                                    class="flex items-center gap-3 text-[var(--color-subtext)] transition-colors hover:text-[var(--color-accent)]"
+                                >
+                                    <span class="w-6 text-[var(--color-overlay)]">
+                                        {String(item.index).padStart(2, "0")}
+                                    </span>
+                                    <span>{item.title}</span>
+                                </a>
+                            ),
+                        )}
+                    </div>
+                </div>
+            )
+        }
+
+        <div class="mt-12 pt-6 border-t border-[var(--color-border)]">
+            <a
+                href={homeHref}
+                class="inline-flex items-center gap-2 font-mono text-sm font-bold text-[var(--color-overlay)] transition-colors hover:text-[var(--color-accent)]"
+            >
+                <span class="text-[var(--color-blue)]">❯</span>
+                <span>cd ~/</span>
+            </a>
+        </div>
+    </article>
+
+    <div
+        class="diagram-lightbox"
+        id="diagram-lightbox"
+        aria-hidden="true"
+        hidden
+    >
+        <button
+            class="diagram-lightbox__backdrop"
+            id="diagram-lightbox-close"
+            aria-label="Close diagram"></button>
+        <div
+            class="diagram-lightbox__panel"
+            id="diagram-lightbox-panel"
+            role="dialog"
+            aria-modal="true"
+        >
+            <img
+                id="diagram-lightbox-image"
+                class="diagram-lightbox__image"
+                alt=""
+            />
+        </div>
+    </div>
+
+    <script>
+        const root = document.getElementById("post-root");
+        const lightbox = document.getElementById("diagram-lightbox");
+        const lightboxPanel = document.getElementById("diagram-lightbox-panel");
+        const lightboxImage = document.getElementById("diagram-lightbox-image");
+        const lightboxClose = document.getElementById("diagram-lightbox-close");
+
+        const closeLightbox = () => {
+            if (!lightbox || !lightboxPanel || !lightboxImage) return;
+            lightbox.setAttribute("aria-hidden", "true");
+            lightbox.setAttribute("hidden", "");
+            lightboxImage.setAttribute("src", "");
+            lightboxImage.setAttribute("alt", "");
+            lightboxPanel.removeAttribute("style");
+            document.body.style.overflow = "";
+        };
+
+        const openLightbox = (image: HTMLImageElement) => {
+            if (!lightbox || !lightboxPanel || !lightboxImage) return;
+
+            const src = image.currentSrc || image.getAttribute("src") || "";
+            const naturalWidth = image.naturalWidth || image.clientWidth || 1;
+            const naturalHeight =
+                image.naturalHeight || image.clientHeight || 1;
+            const viewportWidth = Math.floor(window.innerWidth * 0.9);
+            const viewportHeight = Math.floor(window.innerHeight * 0.9);
+            const scale = Math.min(
+                viewportWidth / naturalWidth,
+                viewportHeight / naturalHeight,
+            );
+            const width = Math.max(320, Math.floor(naturalWidth * scale));
+            const height = Math.max(180, Math.floor(naturalHeight * scale));
+
+            lightboxImage.setAttribute("src", src);
+            lightboxImage.setAttribute("alt", image.getAttribute("alt") ?? "");
+            lightboxPanel.style.width = `${width}px`;
+            lightboxPanel.style.height = `${height}px`;
+            lightbox.removeAttribute("hidden");
+            lightbox.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        };
+
+        if (root) {
+            const diagramImages = root.querySelectorAll<HTMLImageElement>(
+                '.prose img[src*="/diagrams/"]:not([data-zoom-ready])',
+            );
+
+            diagramImages.forEach((image) => {
+                image.setAttribute("data-zoom-ready", "true");
+
+                const parent = image.parentElement;
+
+                if (parent?.tagName === "A") {
+                    parent.classList.add("diagram-link");
+                    parent.removeAttribute("target");
+                    parent.removeAttribute("rel");
+                    parent.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        openLightbox(image);
+                    });
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = image.getAttribute("src") ?? "";
+                link.className = "diagram-link";
+                link.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    openLightbox(image);
+                });
+                image.replaceWith(link);
+                link.appendChild(image);
+            });
+        }
+
+        lightboxClose?.addEventListener("click", closeLightbox);
+
+        lightbox?.addEventListener("click", (event) => {
+            if (event.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (
+                event.key === "Escape" &&
+                lightbox?.getAttribute("aria-hidden") === "false"
+            ) {
+                closeLightbox();
+            }
+        });
+    </script>
+</BaseLayout>

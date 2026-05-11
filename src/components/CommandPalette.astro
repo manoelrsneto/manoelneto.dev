@@ -1,0 +1,273 @@
+---
+
+---
+
+<div id="command-palette" class="command-palette hidden" aria-hidden="true">
+    <div class="command-palette__backdrop" data-command-close></div>
+    <div
+        class="command-palette__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="command-title"
+    >
+        <div class="command-palette__prompt">
+            <span class="text-[var(--color-blue)]">:</span>
+            <label for="command-input" id="command-title" class="sr-only"
+                >Command mode</label
+            >
+            <input
+                id="command-input"
+                class="command-palette__input"
+                type="text"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder="search"
+            />
+        </div>
+        <div id="command-state" class="command-palette__state">
+            search · home · top · bottom · theme dark · lang pt
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+    (function () {
+        const root = document.getElementById("command-palette");
+        const input = document.getElementById("command-input");
+        const state = document.getElementById("command-state");
+        const closers = document.querySelectorAll("[data-command-close]");
+        if (!root || !input || !state) return;
+
+        let open = false;
+        let pendingG = false;
+        let pendingTimer = null;
+
+        function isEditingTarget(target) {
+            return (
+                target instanceof HTMLElement &&
+                (target.tagName === "INPUT" ||
+                    target.tagName === "TEXTAREA" ||
+                    target.tagName === "SELECT" ||
+                    target.isContentEditable)
+            );
+        }
+
+        function searchOpen() {
+            return document.body.classList.contains("search-open");
+        }
+
+        function commandOpen() {
+            return document.body.classList.contains("command-open");
+        }
+
+        function setOpen(next) {
+            open = next;
+            root.classList.toggle("hidden", !next);
+            root.setAttribute("aria-hidden", String(!next));
+            document.body.classList.toggle("command-open", next);
+            if (next) {
+                state.textContent =
+                    "search · home · top · bottom · theme dark · lang pt";
+                requestAnimationFrame(() => input.focus());
+            } else {
+                input.value = "";
+            }
+        }
+
+        function smoothScrollTo(top) {
+            window.scrollTo({ top, behavior: "smooth" });
+        }
+
+        function pageTop() {
+            smoothScrollTo(0);
+        }
+
+        function pageBottom() {
+            smoothScrollTo(
+                Math.max(
+                    0,
+                    document.documentElement.scrollHeight - window.innerHeight,
+                ),
+            );
+        }
+
+        function currentTheme() {
+            return document.documentElement.classList.contains("dark")
+                ? "dark"
+                : "light";
+        }
+
+        function setTheme(next) {
+            const current = currentTheme();
+            if (current === next) return;
+            localStorage.setItem("theme", next);
+            document.documentElement.classList.toggle("dark", next === "dark");
+            const label = document.getElementById("theme-label");
+            if (label) {
+                label.textContent =
+                    next === "dark" ? "set bg=light" : "set bg=dark";
+            }
+        }
+
+        function navigate(href) {
+            if (href) window.location.href = href;
+        }
+
+        function localeHref(targetLang) {
+            const pageLang = document.body.dataset.pageLang || "en";
+            const switchHref = document.body.dataset.localeSwitchHref;
+            if (pageLang === targetLang) return null;
+            return switchHref || null;
+        }
+
+        function runCommand(raw) {
+            const command = raw.trim().toLowerCase();
+            if (!command) {
+                setOpen(false);
+                return;
+            }
+
+            if (command === "search") {
+                setOpen(false);
+                window.dispatchEvent(new CustomEvent("open-search"));
+                return;
+            }
+
+            if (command === "home") {
+                setOpen(false);
+                navigate(document.body.dataset.homeHref || "/");
+                return;
+            }
+
+            if (command === "top") {
+                setOpen(false);
+                pageTop();
+                return;
+            }
+
+            if (command === "bottom") {
+                setOpen(false);
+                pageBottom();
+                return;
+            }
+
+            if (command === "theme dark" || command === "theme light") {
+                setOpen(false);
+                setTheme(command.endsWith("dark") ? "dark" : "light");
+                return;
+            }
+
+            if (command === "lang en" || command === "lang pt") {
+                const href = localeHref(command.endsWith("en") ? "en" : "pt");
+                if (href) {
+                    setOpen(false);
+                    navigate(href);
+                    return;
+                }
+                state.textContent = "Translation not available";
+                return;
+            }
+
+            state.textContent = "Not an editor command";
+        }
+
+        function scrollStep(delta) {
+            window.scrollBy({ top: delta, behavior: "smooth" });
+        }
+
+        function halfPage(direction) {
+            window.scrollBy({
+                top: Math.round(window.innerHeight * 0.5 * direction),
+                behavior: "smooth",
+            });
+        }
+
+        window.addEventListener("open-command", () => setOpen(true));
+
+        closers.forEach((closer) => {
+            closer.addEventListener("click", () => setOpen(false));
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                event.preventDefault();
+                setOpen(false);
+                return;
+            }
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                runCommand(input.value);
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            const target = event.target;
+
+            if (open && event.key === "Escape") {
+                setOpen(false);
+                return;
+            }
+
+            if (isEditingTarget(target) || searchOpen() || commandOpen()) {
+                return;
+            }
+
+            if (event.key === ":") {
+                event.preventDefault();
+                setOpen(true);
+                return;
+            }
+
+            if (event.key === "j") {
+                event.preventDefault();
+                scrollStep(72);
+                return;
+            }
+
+            if (event.key === "k") {
+                event.preventDefault();
+                scrollStep(-72);
+                return;
+            }
+
+            if (event.key === "d") {
+                event.preventDefault();
+                halfPage(1);
+                return;
+            }
+
+            if (event.key === "u") {
+                event.preventDefault();
+                halfPage(-1);
+                return;
+            }
+
+            if (event.key === "G" && event.shiftKey) {
+                event.preventDefault();
+                pageBottom();
+                return;
+            }
+
+            if (event.key === "g" && !event.shiftKey) {
+                if (pendingG) {
+                    event.preventDefault();
+                    pendingG = false;
+                    clearTimeout(pendingTimer);
+                    pageTop();
+                    return;
+                }
+
+                pendingG = true;
+                pendingTimer = setTimeout(() => {
+                    pendingG = false;
+                }, 300);
+            } else if (pendingG) {
+                pendingG = false;
+                clearTimeout(pendingTimer);
+            }
+        });
+    })();
+</script>

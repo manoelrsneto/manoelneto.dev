@@ -1,0 +1,48 @@
+---
+import { ui } from "@/i18n/ui";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const uiText = ui.pt;
+---
+
+<BaseLayout
+    title="404 — manoelneto.dev"
+    description={uiText.notFoundDescription}
+    pageLang="pt"
+    localeSwitchHref="/404"
+>
+    <section class="font-mono">
+        <div
+            class="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-overlay)]"
+        >
+            <span class="text-[var(--color-red)]">!</span>
+            <span>bufdo / 404</span>
+        </div>
+
+        <h1 class="mb-4 font-mono text-3xl font-bold text-[var(--color-text)]">
+            {uiText.notFoundTitle}
+        </h1>
+
+        <p
+            class="mb-8 max-w-xl text-sm leading-relaxed text-[var(--color-subtext)]"
+        >
+            {uiText.notFoundBody}
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+            <a
+                href="/pt"
+                class="status-group hover:border-[var(--color-accent)] transition-colors"
+            >
+                <span class="status-segment status-progress">:open /</span>
+            </a>
+            <button
+                type="button"
+                class="status-group cursor-pointer hover:border-[var(--color-accent)] transition-colors"
+                data-search-trigger
+            >
+                <span class="status-segment status-muted">:search</span>
+            </button>
+        </div>
+    </section>
+</BaseLayout>

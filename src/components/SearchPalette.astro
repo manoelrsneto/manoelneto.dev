@@ -1,0 +1,202 @@
+---
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    pageLang?: "en" | "pt";
+}
+
+const { pageLang = "en" } = Astro.props;
+const uiText = ui[pageLang];
+---
+
+<div id="search-palette" class="search-palette hidden" aria-hidden="true">
+    <div class="search-palette__backdrop" data-search-close></div>
+    <div
+        class="search-palette__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="search-title"
+    >
+        <div class="search-palette__header">
+            <div class="search-palette__prompt">
+                <span class="text-[var(--color-blue)]">/</span>
+                <span id="search-title">search</span>
+            </div>
+            <button
+                type="button"
+                class="search-palette__close"
+                data-search-close
+                aria-label={uiText.searchClose}
+            >
+                esc
+            </button>
+        </div>
+
+        <label class="search-palette__input-wrap">
+            <span class="sr-only">{uiText.searchSrLabel}</span>
+            <input
+                id="search-input"
+                class="search-palette__input"
+                type="search"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder={uiText.searchPlaceholder}
+            />
+        </label>
+
+        <div id="search-state" class="search-palette__state">
+            {uiText.searchType}
+        </div>
+        <ul id="search-results" class="search-palette__results"></ul>
+    </div>
+</div>
+
+<script is:inline>
+    (function () {
+        const lang =
+            document.documentElement.getAttribute("lang") === "pt"
+                ? "pt"
+                : "en";
+        const messages = {
+            type: { en: "Type to search", pt: "Digite para buscar" },
+            loading: { en: "Searching...", pt: "Buscando..." },
+            none: { en: "No matches", pt: "Nenhum resultado" },
+            unavailable: {
+                en: "Search index unavailable. Run pnpm build.",
+                pt: "Índice de busca indisponível. Rode pnpm build.",
+            },
+        };
+        const root = document.getElementById("search-palette");
+        const input = document.getElementById("search-input");
+        const results = document.getElementById("search-results");
+        const state = document.getElementById("search-state");
+        const triggers = document.querySelectorAll("[data-search-trigger]");
+        const closers = document.querySelectorAll("[data-search-close]");
+        if (!root || !input || !results || !state) return;
+
+        let pagefind = null;
+        let open = false;
+        let searchSeq = 0;
+
+        function setOpen(next) {
+            open = next;
+            root.classList.toggle("hidden", !next);
+            root.setAttribute("aria-hidden", String(!next));
+            document.body.classList.toggle("search-open", next);
+            if (next) {
+                requestAnimationFrame(() => input.focus());
+            } else {
+                input.value = "";
+                results.innerHTML = "";
+                state.textContent = messages.type[lang];
+            }
+        }
+
+        async function ensurePagefind() {
+            if (pagefind) return pagefind;
+            pagefind = await import("/pagefind/pagefind.js");
+            return pagefind;
+        }
+
+        function renderResults(items) {
+            results.innerHTML = items
+                .map(
+                    (item, index) => `
+        <li>
+          <a href="${item.url}" class="search-result ${index === 0 ? "search-result--active" : ""}">
+            <div class="search-result__top">
+              <span class="search-result__index">${String(index + 1).padStart(2, "0")}</span>
+              <span class="search-result__title">${item.meta.title || item.url}</span>
+              <span class="search-result__url">${item.url}</span>
+            </div>
+            <p class="search-result__excerpt">${item.excerpt}</p>
+          </a>
+        </li>
+      `,
+                )
+                .join("");
+        }
+
+        async function runSearch(term) {
+            const seq = ++searchSeq;
+            const query = term.trim();
+            if (!query) {
+                results.innerHTML = "";
+                state.textContent = messages.type[lang];
+                return;
+            }
+
+            state.textContent = messages.loading[lang];
+
+            try {
+                const mod = await ensurePagefind();
+                const search = await mod.search(query);
+                const slice = search.results.slice(0, 8);
+                const loaded = await Promise.all(
+                    slice.map((result) => result.data()),
+                );
+                if (seq !== searchSeq) return;
+
+                if (!loaded.length) {
+                    results.innerHTML = "";
+                    state.textContent = messages.none[lang];
+                    return;
+                }
+
+                state.textContent =
+                    lang === "pt"
+                        ? `${loaded.length} resultado${loaded.length === 1 ? "" : "s"}`
+                        : `${loaded.length} result${loaded.length === 1 ? "" : "s"}`;
+                renderResults(loaded);
+            } catch (error) {
+                if (seq !== searchSeq) return;
+                results.innerHTML = "";
+                state.textContent = messages.unavailable[lang];
+            }
+        }
+
+        let timeout = null;
+        input.addEventListener("input", () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => runSearch(input.value), 120);
+        });
+
+        triggers.forEach((trigger) => {
+            trigger.addEventListener("click", () => setOpen(true));
+        });
+
+        window.addEventListener("open-search", () => setOpen(true));
+
+        closers.forEach((closer) => {
+            closer.addEventListener("click", () => setOpen(false));
+        });
+
+        document.addEventListener("keydown", (event) => {
+            const target = event.target;
+            const editing =
+                target instanceof HTMLElement &&
+                (target.tagName === "INPUT" ||
+                    target.tagName === "TEXTAREA" ||
+                    target.isContentEditable);
+
+            if (event.key === "Escape" && open) {
+                setOpen(false);
+                return;
+            }
+
+            if (editing) return;
+
+            if (
+                (event.key === "/" ||
+                    (event.key.toLowerCase() === "k" &&
+                        (event.metaKey || event.ctrlKey))) &&
+                !open
+            ) {
+                event.preventDefault();
+                setOpen(true);
+            }
+        });
+    })();
+</script>

@@ -1,0 +1,26 @@
+direction: right
+
+content: {
+  label: "MDX posts"
+  shape: rectangle
+}
+
+build: {
+  label: "Astro build"
+  shape: rectangle
+}
+
+search: {
+  label: "Pagefind index"
+  shape: rectangle
+}
+
+site: {
+  label: "Static site"
+  shape: rectangle
+}
+
+content -> build: compile
+build -> search: index
+build -> site: render
+search -> site: search

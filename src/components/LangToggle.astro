@@ -1,0 +1,25 @@
+---
+import { ui } from "@/i18n/ui";
+
+interface Props {
+    currentLang: "en" | "pt";
+    href: string;
+}
+
+const { currentLang, href } = Astro.props;
+
+const targetLang = currentLang === "en" ? "pt" : "en";
+const currentLabel = currentLang === "pt" ? "PT" : "EN";
+const targetLabel = targetLang === "pt" ? "PT" : "EN";
+const uiText = ui[currentLang];
+---
+
+<a
+    href={href}
+    class="inline-flex items-center gap-1 font-mono text-[11px] font-bold transition-colors hover:text-[var(--color-subtext)]"
+    title={`${uiText.switchLanguage}: ${targetLang === "en" ? "English" : "Portuguese"}`}
+>
+    <span class="text-[var(--color-blue)]">{currentLabel}</span>
+    <span class="text-[var(--color-overlay)]">/</span>
+    <span class="text-[var(--color-overlay)]">{targetLabel}</span>
+</a>

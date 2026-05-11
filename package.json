@@ -1,0 +1,43 @@
+{
+  "name": "manoelneto.dev",
+  "version": "1.0.0",
+  "description": "Manoel Neto's personal blog",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "lint": "biome lint .",
+    "format": "biome format --write . && prettier --write \"src/**/*.astro\"",
+    "astro:check": "astro check",
+    "check": "biome check . && prettier --check \"src/**/*.astro\" && astro check",
+    "diagram": "d2",
+    "diagrams:render": "mkdir -p public/diagrams && for file in diagrams/*.d2; do [ -f \"$file\" ] || exit 0; name=$(basename \"$file\" .d2); d2 --theme ${D2_THEME:-1} --dark-theme ${D2_DARK_THEME:-200} \"$file\" \"public/diagrams/$name.svg\"; done",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "author": "manoelrsneto",
+  "license": "ISC",
+  "packageManager": "pnpm@10.29.3",
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.0",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/tailwind": "^5.1.4",
+    "@tailwindcss/typography": "^0.5.16",
+    "astro": "^5.6.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@biomejs/biome": "^2.4.15",
+    "pagefind": "^1.5.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.9.3"
+  }
+}
