@@ -76,7 +76,7 @@ const localeSwitchHref = translationSlug
                         <>
                             <span class="text-[var(--color-overlay)]">on</span>
                             <span class="flex items-center gap-1 text-[var(--color-mauve)]">
-                                <span class="status-icon"></span>
+                                <span class="status-icon" />
                                 <span>{tags[0]}</span>
                             </span>
                         </>
@@ -87,13 +87,20 @@ const localeSwitchHref = translationSlug
                 {
                     tags && tags.length > 1 && (
                         <span class="text-[var(--color-yellow)]">
-                            [{tags.slice(1).map((t) => `+${t}`).join(" ")}]
+                            [
+                            {tags
+                                .slice(1)
+                                .map((t) => `+${t}`)
+                                .join(" ")}
+                            ]
                         </span>
                     )
                 }
 
                 <!-- Reading time + date pushed to the right -->
-                <div class="ml-auto flex items-center gap-3 text-[var(--color-overlay)]">
+                <div
+                    class="ml-auto flex items-center gap-3 text-[var(--color-overlay)]"
+                >
                     <span>{readTimeLabel}</span>
                     <time datetime={pubDate.toISOString()}>{pubDateStr}</time>
                     {
@@ -109,7 +116,9 @@ const localeSwitchHref = translationSlug
             <!-- Cursor + command line -->
             <div class="mb-6 flex items-center gap-2 text-sm font-bold">
                 <span class="shrink-0 text-[var(--color-blue)]">❯</span>
-                <span class="flex min-w-0 items-center gap-1.5 text-[var(--color-overlay)]">
+                <span
+                    class="flex min-w-0 items-center gap-1.5 text-[var(--color-overlay)]"
+                >
                     <span class="status-icon shrink-0 text-xs">󰈙</span>
                     <span class="truncate">{command}</span>
                 </span>

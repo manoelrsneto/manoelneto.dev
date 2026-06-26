@@ -134,6 +134,19 @@ The build produces a fully static `dist/` with an embedded Pagefind search index
 
 ---
 
+## AGENTS.md index
+
+| File | What it covers |
+|---|---|
+| [`src/components/AGENTS.md`](src/components/AGENTS.md) | Component inventory, props conventions, Footer scripts, PostCard layout |
+| [`src/layouts/AGENTS.md`](src/layouts/AGENTS.md) | BaseLayout (shell, inline scripts, props) · BlogPost (header structure, series, lightbox) |
+| [`src/content/AGENTS.md`](src/content/AGENTS.md) | Schema fields, bilingual linking, series, reading time |
+| [`src/i18n/AGENTS.md`](src/i18n/AGENTS.md) | How to add strings, string inventory by concern |
+| [`src/pages/AGENTS.md`](src/pages/AGENTS.md) | Route map, slug generation, series/translation assembly |
+| [`DESIGN.md`](DESIGN.md) | Colors, typography, components, do's and don'ts |
+
+---
+
 ## Commit convention
 
 ```

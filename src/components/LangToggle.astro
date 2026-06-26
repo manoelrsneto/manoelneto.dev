@@ -26,10 +26,12 @@ const uiText = ui[currentLang];
 </a>
 
 <script>
-    document.querySelectorAll<HTMLAnchorElement>("[data-lang-switch]").forEach((el) => {
-        el.addEventListener("click", () => {
-            const lang = el.getAttribute("data-lang-switch");
-            if (lang) localStorage.setItem("lang-pref", lang);
+    document
+        .querySelectorAll<HTMLAnchorElement>("[data-lang-switch]")
+        .forEach((el) => {
+            el.addEventListener("click", () => {
+                const lang = el.getAttribute("data-lang-switch");
+                if (lang) localStorage.setItem("lang-pref", lang);
+            });
         });
-    });
 </script>
