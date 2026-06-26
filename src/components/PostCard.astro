@@ -8,11 +8,12 @@ interface Props {
     index?: number;
 }
 
-const { title, description, pubDate, slug, tags, index = 1 } = Astro.props;
+const { title, description, pubDate, slug, tags } = Astro.props;
 
 const dateStr = pubDate.toISOString().split("T")[0];
 const fileName = `${slug.split("/").at(-1) ?? slug}.mdx`;
-const itemNumber = String(index).padStart(2, "0");
+const firstTag = tags?.[0];
+const extraTags = tags?.slice(1) ?? [];
 ---
 
 <article class="group">
@@ -21,49 +22,75 @@ const itemNumber = String(index).padStart(2, "0");
         aria-label={`Open post: ${title}`}
         class="block rounded-md border border-transparent px-0 py-4 transition-colors hover:border-[var(--color-border)] hover:bg-[var(--color-status-bg)]/45 sm:px-3"
     >
+        <!-- Prompt context line (Starship-style) -->
         <div
-            class="grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-3"
+            class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs font-bold"
         >
-            <span
-                class="font-mono text-xs font-bold text-[var(--color-overlay)] group-hover:text-[var(--color-blue)]"
-            >
-                {itemNumber}
+            <!-- Directory -->
+            <span class="flex items-center gap-1 text-[var(--color-teal)]">
+                <span class="status-icon"></span>
+                <span>~/blog</span>
             </span>
-            <h2
-                class="min-w-0 font-mono text-base font-bold leading-tight text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]"
-            >
-                <span
-                    class="status-icon mr-1 text-xs text-[var(--color-overlay)] transition-colors group-hover:text-[var(--color-red)]"
-                    >󰈙</span
-                >
-                <span>{fileName}</span>
-            </h2>
+
+            <!-- Git-style branch from first tag -->
+            {
+                firstTag && (
+                    <>
+                        <span class="text-[var(--color-overlay)]">on</span>
+                        <span class="flex items-center gap-1 text-[var(--color-mauve)]">
+                            <span class="status-icon"></span>
+                            <span>{firstTag}</span>
+                        </span>
+                    </>
+                )
+            }
+
+            <!-- Extra tags as dirty-status markers -->
+            {
+                extraTags.length > 0 && (
+                    <span class="text-[var(--color-yellow)]">
+                        [{extraTags.map((t) => `+${t}`).join(" ")}]
+                    </span>
+                )
+            }
+
+            <!-- Date pushed to the right -->
             <time
                 datetime={pubDate.toISOString()}
-                class="hidden shrink-0 font-mono text-xs font-bold text-[var(--color-overlay)] sm:block"
+                class="ml-auto shrink-0 text-[var(--color-overlay)]"
             >
                 {dateStr}
             </time>
         </div>
 
+        <!-- Cursor + filename line -->
+        <div class="mb-1 flex items-center gap-2 font-mono text-sm font-bold">
+            <span
+                class="shrink-0 text-[var(--color-blue)] transition-colors group-hover:text-[var(--color-accent)]"
+                >❯</span
+            >
+            <span class="flex min-w-0 items-center gap-1.5">
+                <span
+                    class="status-icon shrink-0 text-xs text-[var(--color-overlay)]"
+                    >󰈙</span
+                >
+                <span
+                    class="truncate text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]"
+                    >{fileName}</span
+                >
+            </span>
+        </div>
+
+        <!-- Human title (like a command output header) -->
         <p
-            class="mt-1 pl-[3.25rem] text-sm leading-relaxed text-[var(--color-subtext)]"
+            class="mb-1 pl-5 font-mono text-xs font-bold text-[var(--color-overlay)]"
         >
-            {description}
+            # {title}
         </p>
 
-        {
-            tags && tags.length > 0 && (
-                <div class="mt-3 flex flex-wrap gap-2 pl-[3.25rem]">
-                    {tags.map((tag) => (
-                        <span class="status-group">
-                            <span class="status-segment status-muted">
-                                #{tag}
-                            </span>
-                        </span>
-                    ))}
-                </div>
-            )
-        }
+        <!-- Description -->
+        <p class="pl-5 text-sm leading-relaxed text-[var(--color-subtext)]">
+            {description}
+        </p>
     </a>
 </article>

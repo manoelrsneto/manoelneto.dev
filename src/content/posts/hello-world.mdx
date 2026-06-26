@@ -1,0 +1,44 @@
+---
+title: "Hello, world"
+description: "Why I finally decided to start this blog and what I want to write here."
+pubDate: 2026-05-21
+lang: en
+translationKey: hello-world
+---
+
+## So, here we are
+
+I’ve been meaning to start a blog for years. Like a lot of people, I kept letting day-to-day work become the perfect excuse to put it off. Now, finally, here we are.
+
+The plan is simple: write about things I care about and, hopefully, make something useful for people who care about the same kinds of topics. I’m not trying to turn this into a big blog with an editorial calendar or anything like that. If it helps me think more clearly and organize my ideas better, that is already enough.
+
+More than “producing content,” I want a place to write down real experiences, decisions, tradeoffs, and things I learn along the way. Mostly the kind of stuff that comes up in everyday work and usually gets buried in private notes.
+
+### About the blog
+I spend a good part of my day in the terminal, and that is where I feel most comfortable. If we run into each other, there’s a decent chance I’ll have a terminal open. Sometimes Slack too, unfortunately. But a blog that looks like a terminal is a lot more interesting than a blog that looks like Slack.
+
+That is why this blog looks the way it does. I want to feel at home whenever I’m reading or writing here.
+
+The stack is intentionally simple:
+- Astro -> for the site itself
+- Tailwind -> for styling
+- MDX -> for writing posts
+- Pagefind -> for static search
+- D2 -> for diagrams
+
+D2 is worth a quick note. It's a declarative diagram language — you describe nodes and edges in plain text, and it renders an SVG. That fits well here: everything is text files, everything is version-controlled, nothing needs a GUI to maintain. The diagram below is actually an example of itself — written in D2, rendered at build time, and embedded as a static asset.
+
+![Blog pipeline](/diagrams/blog-pipeline.svg)
+
+Content and diagrams go in as source files. Astro compiles everything, Pagefind indexes the output, and what comes out the other end is a static site with no runtime dependencies. No server, no database.
+
+### What comes next
+Now that I’ve finally taken this out of the backlog, I expect to write mostly about:
+- Software Quality
+- Tooling
+- AI for testing
+- And whatever else feels worth writing about at the time
+
+No commitment to a fixed cadence or a fixed set of topics. The important part, for me, is writing about things that genuinely make me want to sit down and write.
+
+That’s it for now. See you in the next post.

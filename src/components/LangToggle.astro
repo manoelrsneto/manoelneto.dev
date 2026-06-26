@@ -16,6 +16,7 @@ const uiText = ui[currentLang];
 
 <a
     href={href}
+    data-lang-switch={targetLang}
     class="inline-flex items-center gap-1 font-mono text-[11px] font-bold transition-colors hover:text-[var(--color-subtext)]"
     title={`${uiText.switchLanguage}: ${targetLang === "en" ? "English" : "Portuguese"}`}
 >
@@ -23,3 +24,12 @@ const uiText = ui[currentLang];
     <span class="text-[var(--color-overlay)]">/</span>
     <span class="text-[var(--color-overlay)]">{targetLabel}</span>
 </a>
+
+<script>
+    document.querySelectorAll<HTMLAnchorElement>("[data-lang-switch]").forEach((el) => {
+        el.addEventListener("click", () => {
+            const lang = el.getAttribute("data-lang-switch");
+            if (lang) localStorage.setItem("lang-pref", lang);
+        });
+    });
+</script>

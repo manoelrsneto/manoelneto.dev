@@ -1,0 +1,44 @@
+---
+title: "Olá, mundo"
+description: "Por que resolvi finalmente tirar esse blog do papel e o que pretendo escrever por aqui."
+pubDate: 2026-05-21
+lang: pt
+translationKey: hello-world
+---
+
+## Então, aqui estamos
+
+Já faz anos que penso em criar um blog. Como acontece com muita gente, a correria do dia a dia acabou virando a desculpa perfeita para empurrar isso pra depois. Agora, finalmente, aqui estamos.
+
+A ideia é escrever sobre assuntos que me interessam e, quem sabe, ajudar pessoas que tenham interesses parecidos. Não tenho ambição de transformar isso aqui em um grande blog, com calendário editorial ou qualquer compromisso do tipo. Se esse espaço me ajudar a organizar melhor minhas ideias, ele já terá cumprido seu papel.
+
+Mais do que “produzir conteúdo”, eu quero registrar experiências, decisões, tradeoffs e aprendizados reais: principalmente aquelas coisas que costumam surgir no trabalho do dia a dia, mas acabam ficando perdidas em notas privadas.
+
+### Sobre o blog
+Eu passo boa parte do meu dia no terminal, e é lá que eu me sinto mais confortável. Se a gente se encontrar por aí, tem uma boa chance de eu estar com o terminal aberto. Às vezes com o Slack também, infelizmente. Mas um blog com cara de terminal é bem mais interessante do que um blog com cara de Slack.
+
+Então é por isso que esse blog tem essa aparência: para que eu me sinta em casa sempre que estiver lendo ou escrevendo por aqui.
+
+A stack é bem simples:
+- Astro -> para criar o site
+- Tailwind -> para estilizar
+- MDX -> para escrever os posts
+- Pagefind -> para criar um mecanismo de busca
+- D2 -> para criar os diagramas
+
+O D2 merece uma explicação rápida. É uma linguagem declarativa de diagramas — você descreve nós e arestas em texto puro, e ele gera um SVG. Isso se encaixa bem aqui: tudo são arquivos de texto, tudo está versionado, nada precisa de uma interface gráfica para ser mantido. O diagrama abaixo é, na prática, um exemplo de si mesmo — escrito em D2, renderizado durante o build e incorporado como um asset estático.
+
+![Pipeline do blog](/diagrams/blog-pipeline.svg)
+
+Conteúdo e diagramas entram como arquivos-fonte. O Astro compila tudo, o Pagefind indexa o resultado, e o que sai do outro lado é um site estático sem dependências em runtime. Sem servidor, sem banco de dados.
+
+### Próximos passos
+Agora que eu finalmente tirei isso do papel, pretendo escrever principalmente sobre:
+- Qualidade de Software
+- Tooling
+- IA para testes
+- E tudo mais que me interessar no momento
+
+Sem compromisso com cadência ou tema fixo. A parte mais importante, para mim, é escrever sobre coisas que realmente me deem vontade de sentar e colocar as ideias no papel.
+
+Entao é isso! Nos vemos no próximo post.

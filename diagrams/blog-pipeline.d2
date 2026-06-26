@@ -5,6 +5,16 @@ content: {
   shape: rectangle
 }
 
+diagrams: {
+  label: "D2 diagrams"
+  shape: rectangle
+}
+
+assets: {
+  label: "SVG assets"
+  shape: rectangle
+}
+
 build: {
   label: "Astro build"
   shape: rectangle
@@ -21,6 +31,8 @@ site: {
 }
 
 content -> build: compile
+diagrams -> assets: render
+assets -> build: include
 build -> search: index
 build -> site: render
 search -> site: search

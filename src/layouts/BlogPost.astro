@@ -60,69 +60,70 @@ const localeSwitchHref = translationSlug
 >
     <article id="post-root">
         <header class="mb-9 font-mono">
-            <div class="mb-5">
-                <div class="status-group min-w-0 max-w-full">
-                    <span class="status-segment status-filetype">
-                        <span class="status-icon">󰈙</span>
-                        <span class="truncate max-w-[52vw] sm:max-w-none"
-                            >{bufferPath}</span
-                        >
-                    </span>
-                </div>
-            </div>
-
+            <!-- Prompt context line (Starship-style) -->
             <div
-                class="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-overlay)]"
+                class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-bold"
             >
-                <span class="text-[var(--color-blue)]">❯</span>
-                <span>{command}</span>
-            </div>
+                <!-- Directory -->
+                <span class="flex items-center gap-1 text-[var(--color-teal)]">
+                    <span class="status-icon"></span>
+                    <span>~/blog</span>
+                </span>
 
-            <h1
-                class="mb-5 font-mono text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl"
-            >
-                {title}
-            </h1>
-
-            <div
-                class="flex flex-wrap items-center gap-3 text-sm font-bold text-[var(--color-overlay)]"
-            >
-                <time
-                    class="text-[var(--color-blue)]"
-                    datetime={pubDate.toISOString()}>{pubDateStr}</time
-                >
+                <!-- Branch from first tag -->
                 {
-                    updatedDateStr && (
+                    tags && tags[0] && (
                         <>
-                            <span>·</span>
-                            <span>
-                                {uiText.updated} {updatedDateStr}
+                            <span class="text-[var(--color-overlay)]">on</span>
+                            <span class="flex items-center gap-1 text-[var(--color-mauve)]">
+                                <span class="status-icon"></span>
+                                <span>{tags[0]}</span>
                             </span>
                         </>
                     )
                 }
+
+                <!-- Extra tags as dirty-status markers -->
                 {
-                    tags && tags.length > 0 && (
-                        <>
-                            <span>·</span>
-                            <div class="flex flex-wrap gap-2">
-                                {tags.map((tag) => (
-                                    <span class="status-group">
-                                        <span class="status-segment status-muted">
-                                            #{tag}
-                                        </span>
-                                    </span>
-                                ))}
-                            </div>
-                        </>
+                    tags && tags.length > 1 && (
+                        <span class="text-[var(--color-yellow)]">
+                            [{tags.slice(1).map((t) => `+${t}`).join(" ")}]
+                        </span>
                     )
                 }
+
+                <!-- Reading time + date pushed to the right -->
+                <div class="ml-auto flex items-center gap-3 text-[var(--color-overlay)]">
+                    <span>{readTimeLabel}</span>
+                    <time datetime={pubDate.toISOString()}>{pubDateStr}</time>
+                    {
+                        updatedDateStr && (
+                            <span title={`${uiText.updated} ${updatedDateStr}`}>
+                                ~{updatedDateStr}
+                            </span>
+                        )
+                    }
+                </div>
             </div>
 
-            <div class="editor-ruler mt-7" aria-hidden="true">
+            <!-- Cursor + command line -->
+            <div class="mb-6 flex items-center gap-2 text-sm font-bold">
+                <span class="shrink-0 text-[var(--color-blue)]">❯</span>
+                <span class="flex min-w-0 items-center gap-1.5 text-[var(--color-overlay)]">
+                    <span class="status-icon shrink-0 text-xs">󰈙</span>
+                    <span class="truncate">{command}</span>
+                </span>
+            </div>
+
+            <h1
+                class="mb-7 font-mono text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl"
+            >
+                {title}
+            </h1>
+
+            <div class="editor-ruler" aria-hidden="true">
                 <span></span>
                 <strong>post</strong>
-                <em>{readTimeLabel}</em>
                 <span></span>
             </div>
         </header>
